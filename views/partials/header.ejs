@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>toDoo</title>
+		<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+		<link href="https://fonts.googleapis.com/css?family=Bitter:400,700&amp;subset=latin-ext" rel="stylesheet"> 
+		<link rel="stylesheet" href="/fa/css/font-awesome.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<style>
+			body, html {
+				font-family: 'Bitter', serif;
+				overflow-x: hidden;
+			}
+			.appWrapper{
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				height:100vh;
+				position: relative;
+			}
+			.appHeader{
+				background-color:#563d7c;
+				display: flex;
+				justify-content: space-between;
+				height:10vh;
+				position: fixed;
+				width: 100%;
+				z-index: 999;
+				box-shadow: 0px 10px 35px 40px  rgba(0,0,0,.1);
+			}
+			.appHeader div.col:nth-child(2){
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.appHeader h3{
+				padding:0px; margin: 0px;
+				font-weight: 100;
+				color:#fff;
+				font-size: 30px;
+				text-shadow: 0px 0px 2px rgba(0,0,0,.2);
+			}
+			.appBody{
+				height: 100%;
+				background-color: #f2f2f2;
+				padding:20px;
+			}
+			.appFooter{
+				background-color:#f3f3f3;
+				height:10vh;
+				display: flex;
+				box-shadow: 0px -10px 35px 40px  rgba(0,0,0,.1);
+				position: fixed;
+				left:0px;
+				bottom:0px;
+				width: 100%;
+				z-index: 99;
+			}
+			.appFooter div.col:nth-child(1){
+				width:85%;
+			}
+			.appFooter div.col:nth-child(1) input{
+				width:100%;
+				height:100%;
+				font-size:20px;
+				font-weight: 600;
+				padding-left: 20px;
+				color:#000;
+				outline: none;
+				border:none;
+			}
+			.appFooter div.col:nth-child(2){
+				width:15%;
+			}
+			.appFooter div.col:nth-child(2) div{
+				width: 100%;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 20px;
+				background-color: #333;
+				color:#27ecac;
+			}
+			.appFooter div.col:nth-child(2) div:hover{
+				background-color: #27ecac;
+				color: white;
+				cursor: pointer;
+			}
+			.aTask{
+				background-color: white;
+				display: flex;
+				justify-content: space-between;
+				border:1px solid rgba(0,0,0,.1);
+				margin-bottom:10px;
+			}
+			.aTask:hover{
+				box-shadow: 0px 0px 5px rgba(0,0,0,.3);
+				cursor: pointer;
+			}
+			.aTask:hover .col:nth-child(2){
+				text-decoration: line-through;
+			}
+			.aTask div.col{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.aTask div.col:nth-child(1){
+				padding:10px;
+			}
+			.aTask div.col:nth-child(1) i,
+			.aTask div.col:nth-child(3) i{
+				font-size: 20px;
+			}
+			.aTask div.col:nth-child(2){
+				font-size: 20px;
+				font-weight: 600;
+				justify-content: flex-start;
+				flex-grow: 1;
+			}
+			.aTask div.col:nth-child(3){
+				padding:10px;
+				color:#c7376f;
+			}
+			.onurButton{
+				border:1px solid #ccc;
+				border-radius: 4px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				padding:5px;
+			}
+			.onurButton.delete{
+				border:1px solid #c7376f;
+			}
+			.aTask.done { border: 0; box-shadow: none;}
+			.aTask.done div.col:nth-child(1){ color:#27ecac; }
+			.aTask.done div.col:nth-child(2){ color:#27ecac; text-decoration: line-through; opacity: .5; }
+			.splash{
+				height:100vh;
+				width: 100vw;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color:#563d7c;
+				position: fixed;
+				left: 0px;
+				top:0px;
+				z-index: 9999;
+			}
+			.toDoo{
+				font-size:50px;
+				color:white;
+				text-shadow: 0px 0px 4px rgba(0,0,0,.6);
+				position: fixed;
+				top:45vh;
+				left:15vw;
+				z-index: 999999;
+				opacity: 0;
+			}
+		</style>
+
+		<script type="text/javascript">
+			$(function(){
+				$('#newTaskBtn').click(function(){
+					$.ajax({
+						type 	: 'POST',
+						url 	: '/tasks',
+						data 	: {title : $('#newTask').val(), isdone: false},
+						success : function(resp){
+							$('#newTask').val('');
+							if (resp.ok == 1){
+								location.reload();
+							}
+						}
+					});
+				});
+
+				$('.deleteTaskBtn').click(function(){
+					var taskId = $(this).parent().attr('data-id');
+					$('tr[data-id="'+taskId+'"]').remove();
+					$.ajax({
+						type 	: 'DELETE',
+						url 	: '/tasks',
+						data 	: {taskId : taskId},
+						success : function(resp){
+							if (resp.ok == 1){
+								location.reload();
+							}
+						}
+					});
+				});
+
+				$('.aTask').click(function(){
+					var taskId 		= $(this).attr('data-id');
+					var taskTitle 	= $(this).attr('data-title');
+					var taskIsdone 	= $(this).attr('data-isdone');
+					$.ajax({
+						type 	: 'PUT',
+						url 	: '/tasks',
+						data 	: {taskId : taskId, taskTitle : taskTitle, taskIsdone : taskIsdone},
+						success : function(resp){
+							if (resp.ok == 1){
+								location.reload();
+							}
+						}
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="appWrapper">
+
+					<div class="appHeader">
+						<div class="col">
+							
+						</div>
+						<div class="col">
+							<h3>toDoo</h3>
+						</div>
+						<div class="col">
+							
+						</div>
+					</div>
+
+					<div class="appBody">
+						
+				

@@ -1,0 +1,16 @@
+<% include partials/header.ejs %>
+	<div class="splash"></div>
+	<div class="toDoo">toDoo</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+	<script>
+		$(function(){
+			$('.toDoo').animate({opacity : 1}, 2000);
+			setTimeout(function(){
+				$('.toDoo').animate({left : '200vw'}, 180, 'easeInBack');
+				setTimeout(function(){
+					window.location.href = "/tasks/";
+				}, 180);
+			}, 2000);
+		})
+	</script>
+<% include partials/footer.ejs %>

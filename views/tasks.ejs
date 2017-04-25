@@ -1,0 +1,23 @@
+<% include partials/header.ejs %>
+	<br><br><br><br>
+	<% for(var i=0; i<todos.length; i++) {%>
+		<div class="aTask <% if (todos[i].isdone == true) { %> done<%}%>" data-id="<%= todos[i]._id %>" data-title="<%= todos[i].title %>" data-isdone="<%= todos[i].isdone %>">
+			<div class="col">
+				<% if (todos[i].isdone == true) { %> 
+					<i class="fa fa-fw fa-check-square-o"></i>
+				<%}else{%>
+					<i class="fa fa-fw fa-square-o"></i>
+				<%}%>
+			</div>
+			<div class="col">
+				<%= todos[i].title %>
+			</div>
+			<div class="col deleteTaskBtn">
+				<div class="onurButton delete">
+					<i class="fa fa-fw fa-trash"></i>
+				</div>
+			</div>
+		</div>
+	<% } %>
+	<br><br><br><br>
+<% include partials/footer.ejs %>
